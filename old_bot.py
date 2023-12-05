@@ -1,9 +1,11 @@
 import os
 
 import discord
-import random
+import requests
+from bs4 import BeautifulSoup
+import json
 from dotenv import load_dotenv
-
+#from selenium import webdriver
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -14,7 +16,7 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
-bot = commands.Bot(command_prefix='!')
+
 
 @client.event
 async def on_ready():
@@ -50,11 +52,43 @@ async def on_message(message):
         ),
     ]
 
-    if message.content == '99!':
-        response = random.choice(brooklyn_99_quotes)
-        await message.channel.send(response)
-    elif message.content == 'raise-exception':
-        raise discord.DiscordException
+    #if message.content == '99!':
+        #response = random.choice(brooklyn_99_quotes)
+        #await message.channel.send(response)
+    #elif message.content == 'raise-exception':
+        #raise discord.DiscordException
+    
+    #TWITTER HANDLER
+    if message.content.startswith('https://www.twitter.com/') or message.content.startswith('https://x.com/'):
+
+        responseList = message.content.split(".com")
+        response = "https://vxtwitter.com" + responseList[1]
+        await message.channel.send(response) 
+
+    #TIKTOK HANDLER
+    
+    if message.content.startswith('https://tiktok.com/') or message.content.startswith('https://vm.tiktok.com/'):
+        print(message.content)
+        #reqs = requests.get(message.content)
+        #soup = BeautifulSoup(reqs.text, 'html.parser')
+        r = requests.get('https://vm.tiktok.com/ZGeegDDC6/')
+        
+        print(r)
+        
+        # print json content
+        print(r.text)
+      
+   
+        
+        
+    #REDDIT HANDLER
+    if message.content.startswith('https://www.reddit.com/'):
+        responseList = message.content.split(".com")
+        response = "https://rxddit.com" + responseList[1]
+        await message.channel.send(response) 
+
+
+
 
 @client.event
 async def on_error(event, *args, **kwargs):
