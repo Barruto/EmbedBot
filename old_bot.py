@@ -5,7 +5,10 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from dotenv import load_dotenv
-#from selenium import webdriver
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -66,20 +69,29 @@ async def on_message(message):
         await message.channel.send(response) 
 
     #TIKTOK HANDLER
-    
-    if message.content.startswith('https://tiktok.com/') or message.content.startswith('https://vm.tiktok.com/'):
+    if message.content.startswith('https://tiktok.com/'):
+        responseList = message.content.split(".com")
+        response = "https://vxtiktok.com" + responseList[1]
+        await message.channel.send(response)
+
+    if message.content.startswith('https://vm.tiktok.com/'):
         print(message.content)
-        #reqs = requests.get(message.content)
-        #soup = BeautifulSoup(reqs.text, 'html.parser')
-        r = requests.get('https://vm.tiktok.com/ZGeegDDC6/')
         
-        print(r)
+        # Setup chrome driver
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+
+        # Open a website
+        driver.get(message.content)
         
-        # print json content
-        print(r.text)
-      
-   
+        # print json contentget_url = driver.current_url
+        get_url = driver.current_url
+        print("The current url is:"+str(get_url))
         
+        driver.quit()
+
+        responseList = get_url.split(".com")
+        response = "https://vxtiktok.com" + responseList[1]
+        await message.channel.send(response) 
         
     #REDDIT HANDLER
     if message.content.startswith('https://www.reddit.com/'):
